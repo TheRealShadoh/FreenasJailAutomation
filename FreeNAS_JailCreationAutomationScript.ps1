@@ -1,13 +1,32 @@
-<#
-    FreeNAS jail configuration script
-Aims to generate a configuration file for you to copy pasta into an SSH session
+<###############################################################################
+################################################################################
+Freenas Jail Automation
+
+TheRealShadoh
+################################################################################
+################################################################################
+
+Generates a directory of configuration files for Plex, Tautulli, Radarr, Sonarr,
+Transmission, SABnzbd, Nzbhydra2, Lidarr.
+
+Currently requires manual copy/paste from the configuration files, as well as
+manually entering the rc.d files from the configuration files. Some basic
+steps are included within the configuration files for these parts.
+
+The goal is to implement SSH into the powershell script which will allow the script
+to create configuration files, and implement the configuration changes. Decreasing 
+the amount of steps needed to be accomplished on the FreeNAS GUI to pre-stage the
+environment for the jails.
+
+Limitations
+Only supports a single storage pool configuration.
 
 Requirements
 
-1. storage pool created
-2. ssh enabled
-3. ssh usable account
-4. creation of datasets for
+1. Storage pool created
+2. SSH enabled
+3. SSH account available (root is disabled by default)
+4. Creation of datasets for
     - downloads
         --sabnzbd
         --torrents
@@ -17,16 +36,16 @@ Requirements
         --anime
         --music
     -appdata
-5. creation of media user on FreeNAS with a known UID
-    pw useradd -n media -u 8675309 -d /nonexistent -s /usr/sbin/nologin  
-6. 
-Tested working with 11.2-RELEASE and some 11.1-RELEASE jails.
+5. Creation of media user on FreeNAS with a known UID
+6. Creation of media group on FreeNAS with a known UID
+7. Assign the user and group created above (media) as the owner of the datasets.
 
-Would like to enable win10 SSH or use putty/plink to automate 
+Untested as of yet from a clean configuration. Spot tested wit 11.1 and 11.2
+
+I'm not a FreeNAS guru so if you see any issues or better ways to do things, don't hesitate! 
 #>
 
 # Host Config
-
 $hostIP = "PLACEHOLDER"
 $hostUsername = "PLACEHOLDER"
 $hostPassword = "PLACEHOLDER"
@@ -37,55 +56,56 @@ $sharedAccountName = "media"
 $sharedAccountUID = "8675309"
 
 # Jail Config
-# Creating Plex, Tautulli, Radarr, Sonarr, Transmission, SABnzbd, nzbhydra2, lidarr
+# Plex
 $jailPlexName = "plex"
 $jailPlexIP4 = "192.168.1.9"
 $jailPlexVnet = "vnet0|"
 $jailPlexCIDR = "/24"
 $jailPlexGateway = "192.168.1.1"
-
+# Tautuli
 $jailTautulliName = "tautulli"
 $jailTautulliIP4 = "192.168.1.8"
 $jailTautulliVnet = "vnet0|"
 $jailTautulliCIDR = "/24"
 $jailTautulliGateway = "192.168.1.1"
-
+# Radarr
 $jailRadarrName = "radarr"
 $jailRadarrIP4 = "192.168.1.6"
 $jailRadarrVnet = "vnet0|"
 $jailRadarrCIDR = "/24"
 $jailRadarrGateway = "192.168.1.1"
-
+# Sonarr
 $jailSonarrName = "sonarr"
 $jailSonarrIP4 = "192.168.1.7"
 $jailSonarrVnet = "vnet0|"
 $jailSonarrCIDR = "/24"
 $jailSonarrGateway = "192.168.1.1"
-
+# Transmission
 $jailTransmissionName = "transmission"
 $jailTransmissionIP4 = "192.168.1.11"
 $jailTransmissionVnet = "vnet0|"
 $jailTransmissionCIDR = "/24"
 $jailTransmissionGateway = "192.168.1.1"
-
+# Sabnzbd
 $jailSabName = "sabnzbd"
 $jailSabIP4 = "192.168.1.10"
 $jailSabVnet = "lagg0|"
 $jailSabCIDR = "/24"
 $jailSabGateway = "192.168.1.1"
-
+# Hydra
 $jailHydraName = "hydra"
 $jailHydraIP4 = "192.168.1.12"
 $jailHydraVnet = "vnet0|"
 $jailHydraCIDR = "/24"
 $jailHydraGateway = "192.168.1.1"
-
+# Lidarr
 $jailLidarrName = "lidarr"
 $jailLidarrIP4 = "192.168.1.14"
 $jailLidarrVnet = "vnet0|"
 $jailLidarrCIDR = "/24"
 $jailLidarrGateway = "192.168.1.1"
 
+#region DO NOT MODIFY THIS REGION
 #region Plex
     #Localize variables
     $jailname = $jailPlexName
@@ -616,3 +636,5 @@ $transmissionConfig | Out-file -FilePath .\JailConfig\$($jailTransmissionName).t
 $sabconfig | Out-file -FilePath .\JailConfig\$($jailSabName).txt -Encoding utf8 -Force
 $hydraConfig | Out-file -FilePath .\JailConfig\$($jailHydraName).txt -Encoding utf8 -Force
 $lidarrConfig | Out-file -FilePath .\JailConfig\$($jailLidarrName).txt -Encoding utf8 -Force
+
+#endregion
