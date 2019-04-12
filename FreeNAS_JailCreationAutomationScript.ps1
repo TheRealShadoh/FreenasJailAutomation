@@ -9,7 +9,7 @@ Requirements
 3. ssh usable account
 4. creation of datasets for
     - downloads
-        --nzb
+        --sabnzbd
         --torrents
     -media
         --movies
@@ -17,7 +17,6 @@ Requirements
         --anime
         --music
     -appdata
-        -config
 5. creation of media user on FreeNAS with a known UID
     pw useradd -n media -u 8675309 -d /nonexistent -s /usr/sbin/nologin  
 6. 
